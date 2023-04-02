@@ -1,0 +1,50 @@
+version: "3.5"
+
+services:
+  server:
+    build: 
+      context: ./my_server
+      dockerfile: Dockerfile
+      network:  host
+    image: my_server
+    container_name: server
+    hostname: server
+    stdin_open: true
+    tty: true
+    privileged: true 
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+      - 10.58.194.16
+      - 10.58.194.11
+      - 192.168.0.1
+
+    volumes:
+      - ./logs/server:/logs
+    environment:
+      - ROLE=server
+    cap_add: 
+      - NET_ADMIN
+
+  client:
+    build:
+      context: ./my_client
+      dockerfile: Dockerfile
+      network: host
+    image: my_client
+    container_name: client
+    hostname: client
+    stdin_open: true
+    tty: true
+    privileged: true
+    volumes:
+      - ./logs/client:/logs
+    environment:
+      - ROLE=client
+    depends_on:
+      - server
+    cap_add: 
+      - NET_ADMIN
+
+
+
